@@ -1,0 +1,125 @@
+---
+title: "Lab 6.2"
+format: pdf
+editor: visual
+author: Zoe Nguyen
+---
+
+### Question 1:
+
+-   We modified the experiment to include both conditions: some trials with the nose pinched (yes) and some trials with the nose not pinched (no), rather than having all trials with the nose pinched.This allows us to compare identification accuracy between the two conditions
+
+### Question 2:
+
+```{r}
+library(tidyverse)
+library(infer)
+
+my_df <- read_csv("lab6.2 - Sheet1.csv")
+
+slice(my_df, 1:100)
+```
+
+-   The data frame differs from our original sketch. Originally we planned to have only trials with nose pinched, but our actual experiment includes a "pinched_nose" column that indicates whether the nose was pinched (yes) or not (no) for each trial
+
+### Question 3:
+
+```{r}
+ggplot(my_df, aes(x = pinched_nose, fill = correct)) +
+  geom_bar(position = "fill") +
+  labs(x = "Nose Condition", 
+       y = "Proportion",
+       fill = "Result") +
+  theme_minimal()
+```
+
+-   The visualization compares identification accuracy between trials with the nose pinched vs not pinched. The taster performed slightly better when the nose was pinched, which is contrary to our initial hypothesis that pinching the nose would make it harder to identify flavors. However, this difference appears relatively small
+
+### Question 4:
+
+```{r}
+library(tidyverse)
+library(infer)
+
+obs_diff <- my_df |>
+  specify(response = Trial, explanatory = pinched_nose) |>
+  calculate(stat = "diff in means", order = c("yes", "no"))
+
+obs_diff
+null_dist_order <- my_df |>
+  specify(response = Trial, explanatory = pinched_nose) |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in means", order = c("yes", "no"))
+
+visualize(null_dist_order) +
+  shade_p_value(obs_stat = obs_diff, direction = "two-sided") +
+labs(title = "Null Distribution: Difference in Mean Trial Number",
+       x = "Difference in Mean Trial Number (Pinched - Not Pinched)",
+       y = "Count")
+
+p_value_order <- null_dist_order |>
+  get_p_value(obs_stat = obs_diff, direction = "two-sided")
+
+p_value_order
+```
+
+-   The observed difference in mean trial number between pinched and not-pinched conditions is -1.47
+-   The p-value is 0.4
+-   Since p-value \> 0.05, we fail to reject the null hypothesis. There is no significant difference in run order (trial number) between the two experimental conditions (pinched vs not pinched). This suggests that the experimental conditions were well-randomized throughout the experiment. Both conditions occurred evenly across early and late trials, so run order is not a confounding variable
+
+### Question 5:
+
+a.  The null and alternative hypotheses
+
+-   Null Hypothesis: Pinching the nose shut does not affect the ability to identify flavors
+
+-   Alternative Hypothesis: Pinching the nose shut affects the ability to identify flavors
+
+b)  The value of the observed test statistic
+
+```{r}
+obs_diff_prop <- my_df |>
+  specify(response = correct, explanatory = pinched_nose, success = "yes") |>
+  calculate(stat = "diff in props", order = c("yes", "no"))
+
+obs_diff_prop
+```
+
+Observed test statistic: 0.3
+
+c)  A visualization of the null distribution and observed test statistic with the p-value shaded in
+
+```{r}
+null_dist <- my_df |>
+  specify(response = correct, explanatory = pinched_nose, success = "yes") |>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type = "permute") |>
+  calculate(stat = "diff in props", order = c("yes", "no"))
+
+visualize(null_dist) +
+  shade_p_value(obs_stat = obs_diff_prop, direction = "two-sided") +
+  labs(x = "Difference in Proportions (Pinched - Not Pinched)",
+       y = "Count",
+       title = "Null Distribution of Difference in Proportions",
+       subtitle = "Red line shows observed statistic, shaded area shows p-value") +
+  theme_minimal()
+```
+
+d)  p-value and conclusion
+
+```{r}
+p_value <- null_dist |>
+  get_p_value(obs_stat = obs_diff_prop, direction = "two-sided")
+
+p_value
+```
+
+-   p-value is 0.29
+-   With the significant level in part I is 0.05, we fail to reject the null hypothesis because p-value \> 0.05. This difference is not statistically significant. There is insufficient evidence to conclude that pinching the nose causally affects the ability to identify soda flavors
+
+### Question 6:
+
+-   Since we did not find a significant effect, to increase the chance of finding an effect if we were to repeat the experiment, we would use flavors the taster is unfamiliar with
+
+### 
