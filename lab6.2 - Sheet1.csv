@@ -1,0 +1,21 @@
+Trial,actual_flavor,guessed_flavor,pinched_nose,correct
+1,lime,lime,no,yes
+2,grapefruit,grapefruit,no,yes
+3,lime,lime,no,yes
+4,lime,lime,no,yes
+5,grapefruit,lime,yes,no
+6,grapefruit,grapefruit,yes,yes
+7,lime,lime,no,no
+8,grapefruit,grapefruit,yes ,yes
+9,lime,grapefruit,no,no
+10,lime,lime,yes,yes
+11,grapefruit,grapefruit,yes,yes
+12,grapefruit,grapefruit,yes,yes
+13,lime,lime,yes,yes
+14,grapefruit,grapefruit,yes,yes
+15,lime,lime,no,yes
+16,lime,lime,no,yes
+17,lime,lime,yes,yes
+18,lime,lime,no,no
+19,grapefruit,grapefruit,no,no
+20,lime,lime,yes,yes
